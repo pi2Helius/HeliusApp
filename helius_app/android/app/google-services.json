@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "454059194509",
+    "firebase_url": "https://helius-1983c.firebaseio.com",
+    "project_id": "helius-1983c",
+    "storage_bucket": "helius-1983c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454059194509:android:bda54dfe78bdaf45f30ac4",
+        "android_client_info": {
+          "package_name": "com.helius.heliusapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454059194509-tukkffbubbrlb5n3uerboll5e67q58ia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDlnu8Xg-5ryejVx51E3ye5Oz9l7qdLzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "454059194509-tukkffbubbrlb5n3uerboll5e67q58ia.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "454059194509-1mh7jnu4kcl08ebpjtln2lo6drr4lo5t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.helius.heliusapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
