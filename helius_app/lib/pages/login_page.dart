@@ -187,10 +187,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       tag: 'hero',
       child: Padding(
         padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 48.0,
-          child: Image.asset(''),
+        child: SizedBox(
+          height: 150.0,
+          child: Image.asset('assets/images/helius_logo.png'),
         ),
       ),
     );
@@ -255,7 +254,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           height: 40.0,
           child: new RaisedButton(
             elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.red,
             child: _formMode == FormMode.LOGIN
                 ? new Text('Login',
