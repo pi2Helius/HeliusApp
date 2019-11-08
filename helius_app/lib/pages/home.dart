@@ -101,7 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return new DefaultTabController(
+      length: 3,
+      child: Scaffold(
         appBar: new AppBar(
           title: new Text('Home'),
           actions: <Widget>[
@@ -110,7 +112,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: new TextStyle(fontSize: 17.0, color: Colors.white)),
                 onPressed: _signOut)
           ],
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(icon: Icon(Icons.table_chart)),
+              Tab(icon: Icon(Icons.alarm)),
+              Tab(icon: Icon(Icons.settings)),
+            ],
+          ),
         ),
-    );
+        body: TabBarView(
+          children: <Widget>[
+            Icon(Icons.table_chart),
+            Icon(Icons.alarm),
+            Icon(Icons.settings),
+          ],
+        ),
+      ),
+    ); 
   }
+
 }
