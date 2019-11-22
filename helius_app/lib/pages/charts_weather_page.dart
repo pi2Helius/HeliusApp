@@ -10,14 +10,38 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenPage extends State<WeatherScreen> {
   ChartCard cardMaker = ChartCard();
 
-  Material card(Widget content){
-    return Material(
-      color: Colors.white,
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(5.0),
-      shadowColor: Colors.grey[400],
-      child: content,
-      );
+  Widget _cardContent(String title, String value, String unity){
+    String valueString = value + " " + unity;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //Title
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text(title, style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey[500]),),
+                ),
+
+                //Value
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text( valueString, style: TextStyle(
+                    fontSize: 30.0),),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -30,19 +54,19 @@ class _WeatherScreenPage extends State<WeatherScreen> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("Temperatura Ambiente", "31", "ºC")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.green)),
+            child: cardMaker.card(_cardContent("Umidade", "18", "%")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.blue)),
+            child: cardMaker.card(_cardContent("Índice UV", "2", "")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.purple)),
+            child: cardMaker.card(_cardContent("Irradiação solar", "1460", "W/m²")),
           ),
         ],
         staggeredTiles: [
