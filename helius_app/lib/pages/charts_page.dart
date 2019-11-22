@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:helius_app/pages/charts_battery_page.dart';
+import 'package:helius_app/pages/charts_engine_page.dart';
+import 'package:helius_app/pages/charts_weather_page.dart';
 
 class ChartsScreen extends StatefulWidget {
   @override
@@ -14,24 +17,15 @@ class _ChartsScreenPage extends State<ChartsScreen> {
     3: Text('Previsão'),
   };
 
-  final Map<int, Widget> infoScreen = const <int, Widget>{
+  final Map<int, Widget> infoScreen = <int, Widget>{
     0: Center(
-      child: FlutterLogo(
-        colors: Colors.indigo,
-        size: 200.0,
-      ),
+      child: BatteryScreen(),
     ),
     1: Center(
-      child: FlutterLogo(
-        colors: Colors.teal,
-        size: 200.0,
-      ),
+      child: EngineScreen(),
     ),
     2: Center(
-      child: FlutterLogo(
-        colors: Colors.cyan,
-        size: 200.0,
-      ),
+      child: WeatherScreen(),
     ),
     3: Center(
       child: FlutterLogo(
