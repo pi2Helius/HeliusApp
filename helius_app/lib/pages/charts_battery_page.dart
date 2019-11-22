@@ -13,14 +13,51 @@ class _BatteryScreenPage extends State<BatteryScreen> {
 
   ChartCard cardMaker = ChartCard();
 
-  Widget _potEleChart(){
-    return new Sparkline(
-      data: data,
-      fillMode: FillMode.below,
-      fillGradient: new LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Colors.amber[800], Colors.amber[200]],
+  Widget _potEleChart(List data, int value){
+    String valueString = value.toString() + " W";
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //Title
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text("Potência elétrica gerador", style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.grey),),
+                ),
+
+                //Value
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text( valueString, style: TextStyle(
+                    fontSize: 30.0),),
+                ),
+
+                //Chart
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: new Sparkline(
+                    data: data,
+                    lineColor: Colors.red,
+                    fillMode: FillMode.below,
+                    fillGradient: new LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.amber[800], Colors.amber[200]],
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -53,7 +90,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.blue)),
+            child: cardMaker.card(_potEleChart(data, 500)),
           ),
         ],
         staggeredTiles: [
