@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:helius_app/services/authentication.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:helius_app/models/user.dart';
-
+import 'package:helius_app/pages/notification_page.dart';
+import 'package:helius_app/pages/charts_page.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -122,8 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            Icon(Icons.table_chart),
-            Icon(Icons.alarm),
+            ChartsScreen(),
+            NotificationScreen(),
             Icon(Icons.settings),
           ],
         ),
