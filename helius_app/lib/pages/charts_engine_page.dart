@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:helius_app/components/chart_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EngineScreen extends StatefulWidget {
   @override
@@ -9,6 +10,29 @@ class EngineScreen extends StatefulWidget {
 
 class _EngineScreenPage extends State<EngineScreen> {
   ChartCard cardMaker = ChartCard();
+
+  CollectionReference heliusCollection = Firestore.instance.collection('Usina');
+
+  String hotPiston = "";
+  String coldPiston = "";
+  String mirrorTemp = "";
+  String engSpin = "";
+
+  Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
+    DocumentReference documentReference = collectionReference.document(id);
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+
+    if(this.mounted){
+      setState(() {
+        hotPiston = documentSnapshot['TEMP_PQUENTE'].round().toString();
+        coldPiston = documentSnapshot['TEMP_PFRIO'].round().toString();
+        mirrorTemp = documentSnapshot['TEMP_REFLETOR'].round().toString();
+        engSpin = documentSnapshot['ROT'].round().toString();
+      });
+    }
+
+    return documentSnapshot;
+  }
 
   Widget _cardContent(String title, String value, String unity){
     String valueString = value + " " + unity;
@@ -46,6 +70,8 @@ class _EngineScreenPage extends State<EngineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "teste");
+
     return Container(
       child: StaggeredGridView.count(
         crossAxisCount: 4,
@@ -54,21 +80,22 @@ class _EngineScreenPage extends State<EngineScreen> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_cardContent("Pistão quente", "230", "ºC")),
+            child: cardMaker.card(_cardContent("Pistão quente", hotPiston, "ºC")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_cardContent("Pistão frio", "28", "ºC")),
+            child: cardMaker.card(_cardContent("Pistão frio", coldPiston, "ºC")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_cardContent("Temperatura espelho", "40", "ºC")),
+            child: cardMaker.card(_cardContent("Temperatura espelho", mirrorTemp, "ºC")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_cardContent("Rotação do motor", "530", "RPM")),
+            child: cardMaker.card(_cardContent("Rotação do motor", engSpin, "RPM")),
           ),
         ],
+
         staggeredTiles: [
           StaggeredTile.extent(2, 250.0),
           StaggeredTile.extent(2, 250.0),
