@@ -40,6 +40,9 @@ dependencies:
   # Dashboard
   flutter_staggered_grid_view: "^0.3.0"
 
+  # Parsing
+  http: ^0.12.0
+
 
 dev_dependencies:
   flutter_test:
