@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:helius_app/pages/charts_battery_page.dart';
 import 'package:helius_app/pages/charts_engine_page.dart';
 import 'package:helius_app/pages/charts_weather_page.dart';
+import 'package:helius_app/pages/charts_prediction_page.dart';
 
 class ChartsScreen extends StatefulWidget {
   @override
@@ -28,10 +29,7 @@ class _ChartsScreenPage extends State<ChartsScreen> {
       child: WeatherScreen(),
     ),
     3: Center(
-      child: FlutterLogo(
-        colors: Colors.purple,
-        size: 200.0,
-      ),
+      child: PredictionScreen(),
     ),
   };
 

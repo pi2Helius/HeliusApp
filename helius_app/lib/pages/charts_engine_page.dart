@@ -11,7 +11,7 @@ class EngineScreen extends StatefulWidget {
 class _EngineScreenPage extends State<EngineScreen> {
   ChartCard cardMaker = ChartCard();
 
-  CollectionReference heliusCollection = Firestore.instance.collection('Usina');
+  final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
 
   String hotPiston = "";
   String coldPiston = "";

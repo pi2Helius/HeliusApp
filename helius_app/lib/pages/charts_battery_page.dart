@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:helius_app/components/chart_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BatteryScreen extends StatefulWidget {
   @override
@@ -9,13 +10,44 @@ class BatteryScreen extends StatefulWidget {
 }
 
 class _BatteryScreenPage extends State<BatteryScreen> {
-  var data = [0.1, 1.1, 0.5, -0.1, 0.3, -0.1, 0.1, 2.1];
+  // Variables
+  var data = [1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 2.0, 2.0];
+  String pow = "";
 
+  final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
   ChartCard cardMaker = ChartCard();
 
-  Widget _potEleChart(List data, int value){
-    String valueString = value.toString() + " W";
+  Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
+    DocumentReference documentReference = collectionReference.document(id);
+    DocumentSnapshot documentSnapshot = await documentReference.get();
 
+    //Defining generator's power
+    // print('passou1');
+    if(this.mounted){
+      setState(() {
+        var calcPow = documentSnapshot['IGER'] * documentSnapshot['VGER'];
+        pow = calcPow.round().toString();
+      });
+    }
+
+    //Defining generator's power chart content
+    // QuerySnapshot historySnapshots = await documentReference.collection('historico').getDocuments();
+    // var list = historySnapshots.documents;
+    // print('passou2');
+
+    // for (var i = 7; i >= 0; i--) {
+    //   data[i] = list[i].data['IGER'];
+    // }
+
+    // for (var i = 7; i >= 0; i--) {
+    //   print(data[i].toString() + '  ');
+    // }
+
+    return documentSnapshot;
+  }
+
+  Widget _potEleChart(List data, String value){
+    // print('\n\n\ndesenhou!!!!!\n\n\n');
     return Center(
       child: Padding(
         padding: EdgeInsets.all(8.0),
@@ -28,7 +60,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
                 //Title
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text("Potência elétrica gerador", style: TextStyle(
+                  child: Text("Potência gerador", style: TextStyle(
                     fontSize: 20.0,
                     color: Colors.grey),),
                 ),
@@ -36,7 +68,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
                 //Value
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text( valueString, style: TextStyle(
+                  child: Text( value+' W', style: TextStyle(
                     fontSize: 30.0),),
                 ),
 
@@ -72,8 +104,44 @@ class _BatteryScreenPage extends State<BatteryScreen> {
       );
   }
 
+  Widget _cardContent(String title, String value, String unity){
+    String valueString = value + " " + unity;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //Title
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text(title, style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey[500]),),
+                ),
+
+                //Value
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text( valueString, style: TextStyle(
+                    fontSize: 30.0),),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "teste");
+
     return Container(
       child: StaggeredGridView.count(
         crossAxisCount: 4,
@@ -90,7 +158,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_potEleChart(data, 500)),
+            child: cardMaker.card(_potEleChart(data, pow)),
           ),
         ],
         staggeredTiles: [
