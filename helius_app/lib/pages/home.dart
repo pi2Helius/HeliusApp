@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:helius_app/models/user.dart';
 import 'package:helius_app/pages/notification_page.dart';
 import 'package:helius_app/pages/charts_page.dart';
+import 'package:helius_app/pages/settings_page.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -103,10 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
-      length: 3,
+      // length: 3,
+      length: 2,
       child: Scaffold(
         appBar: new AppBar(
-          title: new Text('Home'),
+          title: new Text('Helius'),
           actions: <Widget>[
             new FlatButton(
                 child: new Text('Logout',
@@ -117,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
             tabs: <Widget>[
               Tab(icon: Icon(Icons.table_chart)),
               Tab(icon: Icon(Icons.alarm)),
-              Tab(icon: Icon(Icons.settings)),
+              // Tab(icon: Icon(Icons.settings)),
             ],
           ),
         ),
@@ -125,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ChartsScreen(),
             NotificationScreen(),
-            Icon(Icons.settings),
+            // SettingsScreen(),
           ],
         ),
       ),

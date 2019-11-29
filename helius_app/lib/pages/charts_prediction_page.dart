@@ -18,7 +18,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   List<dynamic> irradElevDataList = [];
   ChartCard cardMaker = ChartCard();
 
-  final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
+  final CollectionReference heliusCollection = Firestore.instance.collection('usinas');
   final databaseReference = FirebaseDatabase.instance.reference();
   final DateFormat formatHour = new DateFormat.H();
   final DateFormat formatDay = new DateFormat("dd/MM");
@@ -145,7 +145,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "teste");
+    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "usina1");
 
     return ListView(
       shrinkWrap: true,
@@ -161,7 +161,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
       height: 120.0,
-      child: cardMaker.card(_cardContent("Previsão Potência Atual", pred.predicao(this.getAtualElev(), irradAtual, 45.0).round().toString(), "W", 18.0, 30.0)),
+      child: cardMaker.card(_cardContent("Previsão Potência Atual", pred.predicao(this.getAtualElev(), irradAtual, 45.0).toStringAsFixed(2), "W", 18.0, 30.0)),
     );
   }
 

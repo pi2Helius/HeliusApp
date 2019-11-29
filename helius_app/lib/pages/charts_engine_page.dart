@@ -11,7 +11,7 @@ class EngineScreen extends StatefulWidget {
 class _EngineScreenPage extends State<EngineScreen> {
   ChartCard cardMaker = ChartCard();
 
-  final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
+  final CollectionReference heliusCollection = Firestore.instance.collection('usinas');
 
   String hotPiston = "";
   String coldPiston = "";
@@ -70,7 +70,7 @@ class _EngineScreenPage extends State<EngineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "teste");
+    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "usina1");
 
     return Container(
       child: StaggeredGridView.count(
@@ -88,7 +88,7 @@ class _EngineScreenPage extends State<EngineScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_cardContent("Temperatura espelho", mirrorTemp, "ºC")),
+            child: cardMaker.card(_cardContent("Temp espelho", mirrorTemp, "ºC")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),

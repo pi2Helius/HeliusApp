@@ -92,7 +92,7 @@ class _WeatherScreenPage extends State<WeatherScreen> {
       ),
       Padding(
         padding: const EdgeInsets.all(4.0),
-        child: cardMaker.card(_cardContent("Temperatura Ambiente", temperature, "ºC")),
+        child: cardMaker.card(_cardContent("Temperatura", temperature, "ºC")),
       ),
       Padding(
         padding: const EdgeInsets.all(4.0),
@@ -141,8 +141,8 @@ class _WeatherScreenPage extends State<WeatherScreen> {
       });
 
       // Getting data from Firebase
-      CollectionReference heliusCollection = Firestore.instance.collection('Usina');
-      DocumentReference documentReference = heliusCollection.document('teste');
+      CollectionReference heliusCollection = Firestore.instance.collection('usinas');
+      DocumentReference documentReference = heliusCollection.document('usina1');
       DocumentSnapshot documentSnapshot = await documentReference.get();
       setState(() {
         radiation = documentSnapshot['IRRAD_LDR'].round().toString();

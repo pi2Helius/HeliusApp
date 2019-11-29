@@ -25,7 +25,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
   DateTime dateNow = new DateTime.now();
 
   final databaseReference = FirebaseDatabase.instance.reference();
-  final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
+  final CollectionReference heliusCollection = Firestore.instance.collection('usinas');
   ChartCard cardMaker = ChartCard();
 
   Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
@@ -183,7 +183,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "teste");
+    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "usina1");
 
     return Container(
       child: StaggeredGridView.count(

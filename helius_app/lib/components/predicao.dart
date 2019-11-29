@@ -2,7 +2,7 @@ import 'dart:math';
 
 double predicao(double elevacao, double gama, double teta){
 
-    if(gama < 1000.0){
+    if(gama < 1056.0){
       if(elevacao < 1.0){
         return 0.0;
       }
@@ -21,7 +21,7 @@ double predicao(double elevacao, double gama, double teta){
     var v_vento = 2.77;
     var t_amb = 27+273;
     var ks = 0.55;
-    var n_gerador = 1.0;
+    var n_gerador = 0.2;
     // var elevacao = 61.08;
     // var teta = 45;
     var pi = 3.1415;

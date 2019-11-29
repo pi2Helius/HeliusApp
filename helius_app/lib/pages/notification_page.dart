@@ -15,7 +15,7 @@ class _NotificationScreenPage extends State<NotificationScreen> {
   }
 
   Widget _createList(BuildContext context){
-    var collectionNotfic = Firestore.instance.collection('Usina').document('cksqVCqVGn1ZtvCEJK4Z').collection('Notificacoes');
+    var collectionNotfic = Firestore.instance.collection('usinas').document('usina1').collection('notificacoes');
 
     return StreamBuilder(
       stream: collectionNotfic.snapshots(),
@@ -34,6 +34,7 @@ class _NotificationScreenPage extends State<NotificationScreen> {
       child: Column(
         children: <Widget>[
           Container(
+            height: 100.0,
             child: Text(document['descricao']),
           ),
 
