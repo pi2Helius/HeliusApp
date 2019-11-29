@@ -3,6 +3,9 @@ import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:helius_app/components/chart_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:intl/intl.dart';
+import 'package:helius_app/components/predicao.dart' as pred;
 
 class BatteryScreen extends StatefulWidget {
   @override
@@ -12,8 +15,16 @@ class BatteryScreen extends StatefulWidget {
 class _BatteryScreenPage extends State<BatteryScreen> {
   // Variables
   var data = [1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 2.0, 2.0];
-  String pow = "";
+  String vBattery = "";
+  double pow = 0.0;
+  double irradAtual = 0.0;
+  List<dynamic> irradElevDataList = [];
 
+  final DateFormat formatHour = new DateFormat.H();
+  final DateFormat formatDay = new DateFormat("dd/MM");
+  DateTime dateNow = new DateTime.now();
+
+  final databaseReference = FirebaseDatabase.instance.reference();
   final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
   ChartCard cardMaker = ChartCard();
 
@@ -25,10 +36,15 @@ class _BatteryScreenPage extends State<BatteryScreen> {
     // print('passou1');
     if(this.mounted){
       setState(() {
-        var calcPow = documentSnapshot['IGER'] * documentSnapshot['VGER'];
-        pow = calcPow.round().toString();
+        pow = documentSnapshot['IGER'] * documentSnapshot['VGER'];
+        vBattery = documentSnapshot['VBAT'].toStringAsFixed(2);
+        irradAtual = documentSnapshot['IRRAD_LDR']*1.0;
       });
     }
+
+    // Getting data from Realtime Database
+    DataSnapshot dataSnapshot = await databaseReference.once();
+    irradElevDataList = dataSnapshot.value['elevacao_radiacao'];
 
     //Defining generator's power chart content
     // QuerySnapshot historySnapshots = await documentReference.collection('historico').getDocuments();
@@ -46,6 +62,33 @@ class _BatteryScreenPage extends State<BatteryScreen> {
     return documentSnapshot;
   }
 
+  double getPredictedPower(){
+    String data = formatDay.format(dateNow);
+    String hour = formatHour.format(dateNow);
+
+    for (var element in irradElevDataList) {
+      if(element['data'] == data){
+        if(element['hora'].toString() == hour){
+          double predPower = pred.predicao(element['elevacao'], irradAtual, 45.0);
+          return predPower;
+        }
+      } 
+    }
+
+    return 0.0;
+  }
+
+  String getEfficiency () {
+    double predPower = getPredictedPower();
+
+    if (predPower <= 0.0){
+      return "N/A";
+    }
+
+    double efficiency = (pow/predPower) * 100.0;
+    return efficiency.round().toString(); 
+  }
+
   Widget _potEleChart(List data, String value){
     // print('\n\n\ndesenhou!!!!!\n\n\n');
     return Center(
@@ -60,7 +103,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
                 //Title
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text("Potência gerador", style: TextStyle(
+                  child: Text("Potência Gerador", style: TextStyle(
                     fontSize: 20.0,
                     color: Colors.grey),),
                 ),
@@ -69,23 +112,23 @@ class _BatteryScreenPage extends State<BatteryScreen> {
                 Padding(
                   padding: EdgeInsets.all(1.0),
                   child: Text( value+' W', style: TextStyle(
-                    fontSize: 30.0),),
+                    fontSize: 48.0),),
                 ),
 
                 //Chart
-                Padding(
-                  padding: EdgeInsets.all(1.0),
-                  child: new Sparkline(
-                    data: data,
-                    lineColor: Colors.red,
-                    fillMode: FillMode.below,
-                    fillGradient: new LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.amber[800], Colors.amber[200]],
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.all(1.0),
+                //   child: new Sparkline(
+                //     data: data,
+                //     lineColor: Colors.red,
+                //     fillMode: FillMode.below,
+                //     fillGradient: new LinearGradient(
+                //       begin: Alignment.topCenter,
+                //       end: Alignment.bottomCenter,
+                //       colors: [Colors.amber[800], Colors.amber[200]],
+                //     ),
+                //   ),
+                // ),
               ],
             )
           ],
@@ -150,15 +193,15 @@ class _BatteryScreenPage extends State<BatteryScreen> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("Tensão Bateria", vBattery, "V")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(FlutterLogo(colors: Colors.green)),
+            child: cardMaker.card(_cardContent("Eficiência", getEfficiency(), "%")),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_potEleChart(data, pow)),
+            child: cardMaker.card(_potEleChart(data, pow.round().toString())),
           ),
         ],
         staggeredTiles: [
