@@ -22,6 +22,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   final databaseReference = FirebaseDatabase.instance.reference();
   final DateFormat formatHour = new DateFormat.H();
   final DateFormat formatDay = new DateFormat("dd/MM");
+  DateTime dateNow = new DateTime.now();
 
   Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
     DocumentReference documentReference = collectionReference.document(id);
@@ -41,10 +42,9 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   }
 
   double getAtualElev(){
-    var now = new DateTime.now();
 
-    String data = formatDay.format(now);
-    String hour = formatHour.format(now);
+    String data = formatDay.format(dateNow);
+    String hour = formatHour.format(dateNow);
 
     for (var element in irradElevDataList) {
       if(element['data'] == data){
@@ -58,9 +58,8 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   }
 
   double getIrradHist(int hour){
-    var now = new DateTime.now();
 
-    String data = formatDay.format(now);
+    String data = formatDay.format(dateNow);
 
     for (var element in irradElevDataList) {
       if(element['data'] == data){
@@ -74,9 +73,8 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   }  
 
   double getElevHist(int hour){
-    var now = new DateTime.now();
 
-    String data = formatDay.format(now);
+    String data = formatDay.format(dateNow);
 
     for (var element in irradElevDataList) {
       if(element['data'] == data){
@@ -87,6 +85,28 @@ class _PredictionScreenPage extends State<PredictionScreen> {
     }
 
     return 0.0;
+  }
+
+  String getPowHourDayAhead(int numDayAhead){
+    
+    String data = formatDay.format(dateNow);
+
+    for (var element in irradElevDataList) {
+      if(element['data'] == data){
+        int index = irradElevDataList.indexOf(element);
+        int initialIndex = index+(6*numDayAhead);
+
+        double powTotal = 0.0;
+        for (var i = initialIndex; i < initialIndex+6; i++) {
+          powTotal = powTotal + pred.predicao(irradElevDataList[i]['elevacao'] , irradElevDataList[i]['radiacao'], 45.0);
+        }
+
+        double avgPow = powTotal/6;
+        return avgPow.round().toString();
+      }
+    }
+
+    return "*Day not found*";
   }
 
   Widget _cardContent(String title, String value, String unity, double fontSizeTitle, double fontSizeData){
@@ -191,48 +211,41 @@ class _PredictionScreenPage extends State<PredictionScreen> {
     );
   }
 
-  Widget _showWeekPow(){
-    final double textMargin = 20.0;
-
-    return ListView(
-      shrinkWrap: true,
+  Widget _showDayListItem(String weekDay, String value, double textMargin){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
           margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
           height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
+          child: Text(weekDay, style: TextStyle(fontSize: 18.0),),
         ),
         Container(
           margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
           height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
-        ),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
-          height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
-        ),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
-          height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
-        ),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
-          height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
-        ),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
-          height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
-        ),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
-          height: 30.0,
-          child: Text("Teste", style: TextStyle(fontSize: 18.0),),
+          child: Text(value + " W/h", style: TextStyle(fontSize: 18.0),),
         ),
       ],
+    );
+  }
+
+  Widget _showWeekPow(){
+    final double textMargin = 20.0;
+
+    return Container(
+      height: 280.0,
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          _showDayListItem("Sábado", getPowHourDayAhead(1), textMargin),
+          _showDayListItem("Domingo", getPowHourDayAhead(2), textMargin),
+          _showDayListItem("Segunda-feira", getPowHourDayAhead(3), textMargin),
+          _showDayListItem("Terça-feira", getPowHourDayAhead(4), textMargin),
+          _showDayListItem("Quarta-feira", getPowHourDayAhead(5), textMargin),
+          _showDayListItem("Quinta-feira", getPowHourDayAhead(6), textMargin),
+          _showDayListItem("Sexta-feira", getPowHourDayAhead(7), textMargin),
+        ],
+      ),
     );
   }
 
