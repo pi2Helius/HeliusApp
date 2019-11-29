@@ -83,11 +83,12 @@ class _WeatherScreenPage extends State<WeatherScreen> {
     String temperature = weatherData['data']['temperature'].toString();
     String humidity = weatherData['data']['humidity'].toString();
     String windVelocity = weatherData['data']['wind_velocity'].toString();
+    String location = weatherData['name'].toString();
 
     return <Widget>[
       Padding(
         padding: const EdgeInsets.all(4.0),
-        child: cardMaker.card(_cardContent("Condição Atual", condition, "")),
+        child: cardMaker.card(_cardContent(location, condition, "")),
       ),
       Padding(
         padding: const EdgeInsets.all(4.0),

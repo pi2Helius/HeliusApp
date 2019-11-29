@@ -21,7 +21,7 @@ class _NotificationScreenPage extends State<NotificationScreen> {
       stream: collectionNotfic.snapshots(),
       builder: (context, snapshot){
         return ListView.builder(
-          itemCount: snapshot.data.documents.length,
+          itemCount: snapshot.data?.documents?.length ?? 0,
           itemBuilder: (context, index) => _buildNotificationItem(context, snapshot.data.documents[index])
         );
       }

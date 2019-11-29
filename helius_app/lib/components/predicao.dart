@@ -1,16 +1,19 @@
 import 'dart:math';
 
-void main(){
-    print('Olha a predicao aí gente!');
-    print(predicao());
-}
+double predicao(double elevacao, double gama, double teta){
 
-double predicao(){
+    if(gama < 1000.0){
+      if(elevacao < 1.0){
+        return 0.0;
+      }
+
+      return 0.0;
+    } 
 
     var f_s = 0.95;
     var rho = 0.94;
     var phi = 0.9;
-    var gama = 2160;
+    // var gama = 2160;
     var alfa_abs = 0.9;
     var e = 0.24;
     var k = 0.06;
@@ -18,9 +21,9 @@ double predicao(){
     var v_vento = 2.77;
     var t_amb = 27+273;
     var ks = 0.55;
-    var n_gerador = 0.94;
-    var elevacao = 61.08;
-    var teta = 45;
+    var n_gerador = 1.0;
+    // var elevacao = 61.08;
+    // var teta = 45;
     var pi = 3.1415;
   
     // formula da energia no concentrador (W)

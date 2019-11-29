@@ -3,6 +3,9 @@ import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:helius_app/components/chart_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:helius_app/components/predicao.dart' as pred;
+import 'package:intl/intl.dart';
 
 class PredictionScreen extends StatefulWidget {
   @override
@@ -11,14 +14,119 @@ class PredictionScreen extends StatefulWidget {
 
 class _PredictionScreenPage extends State<PredictionScreen> {
   // Variables
-
+  double irradAtual = 0.0;
+  List<dynamic> irradElevDataList = [];
   ChartCard cardMaker = ChartCard();
 
+  final CollectionReference heliusCollection = Firestore.instance.collection('Usina');
+  final databaseReference = FirebaseDatabase.instance.reference();
+  final DateFormat formatHour = new DateFormat.H();
+  final DateFormat formatDay = new DateFormat("dd/MM");
 
+  Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
+    DocumentReference documentReference = collectionReference.document(id);
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+
+    if(this.mounted){
+      setState(() {
+        irradAtual = documentSnapshot['IRRAD_LDR']*1.0;
+      });
+    }
+
+    // Getting from Realtime Database
+    DataSnapshot dataSnapshot = await databaseReference.once();
+    irradElevDataList = dataSnapshot.value['elevacao_radiacao'];
+
+    return documentSnapshot;
+  }
+
+  double getAtualElev(){
+    var now = new DateTime.now();
+
+    String data = formatDay.format(now);
+    String hour = formatHour.format(now);
+
+    for (var element in irradElevDataList) {
+      if(element['data'] == data){
+        if(element['hora'].toString() == hour){
+          return element['elevacao'];
+        }
+      } 
+    }
+
+    return 0.0;
+  }
+
+  double getIrradHist(int hour){
+    var now = new DateTime.now();
+
+    String data = formatDay.format(now);
+
+    for (var element in irradElevDataList) {
+      if(element['data'] == data){
+        if(element['hora'] == hour){
+          return element['radiacao'];
+        }
+      } 
+    }
+
+    return 0.0;
+  }  
+
+  double getElevHist(int hour){
+    var now = new DateTime.now();
+
+    String data = formatDay.format(now);
+
+    for (var element in irradElevDataList) {
+      if(element['data'] == data){
+        if(element['hora'] == hour){
+          return element['elevacao'];
+        }
+      } 
+    }
+
+    return 0.0;
+  }
+
+  Widget _cardContent(String title, String value, String unity, double fontSizeTitle, double fontSizeData){
+    String valueString = value + " " + unity;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //Title
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text(title, style: TextStyle(
+                    fontSize: fontSizeTitle,
+                    color: Colors.grey[500]),),
+                ),
+
+                //Value
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Text( valueString, style: TextStyle(
+                    fontSize: fontSizeData),),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    
+    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "teste");
+
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
@@ -33,7 +141,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
       height: 120.0,
-      child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+      child: cardMaker.card(_cardContent("Previsão Potência Atual", pred.predicao(this.getAtualElev(), irradAtual, 45.0).round().toString(), "W", 18.0, 30.0)),
     );
   }
 
@@ -51,37 +159,32 @@ class _PredictionScreenPage extends State<PredictionScreen> {
           Container(
             margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
             width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("11h", pred.predicao(getElevHist(11), getIrradHist(11), 45.0).round().toString(), "W", 16.0, 18.0)),
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
             width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("12h", pred.predicao(getElevHist(12), getIrradHist(12), 45.0).round().toString(), "W", 16.0, 18.0)),
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
             width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("13h", pred.predicao(getElevHist(13), getIrradHist(13), 45.0).round().toString(), "W", 16.0, 18.0)),
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
             width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("14h", pred.predicao(getElevHist(14), getIrradHist(14), 45.0).round().toString(), "W", 16.0, 18.0)),
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
             width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("15h", pred.predicao(getElevHist(15), getIrradHist(15), 45.0).round().toString(), "W", 16.0, 18.0)),
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
             width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: cardMarginH, vertical: cardMarginV),
-            width: cardWidth,
-            child: cardMaker.card(FlutterLogo(colors: Colors.red)),
+            child: cardMaker.card(_cardContent("16h", pred.predicao(getElevHist(16), getIrradHist(16), 45.0).round().toString(), "W", 16.0, 18.0)),
           ),
         ],
       ),
