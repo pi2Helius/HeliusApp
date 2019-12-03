@@ -22,7 +22,29 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   final databaseReference = FirebaseDatabase.instance.reference();
   final DateFormat formatHour = new DateFormat.H();
   final DateFormat formatDay = new DateFormat("dd/MM");
+  final DateFormat formatDayOfWeek = new DateFormat("EEEE");
   DateTime dateNow = new DateTime.now();
+  
+  String weekDay1 = "";
+  String weekDay2 = "";
+  String weekDay3 = "";
+  String weekDay4 = "";
+  String weekDay5 = "";
+  String weekDay6 = "";
+  String weekDay7 = "";
+
+  @override
+  void initState() {
+    weekDay1 = formatDayOfWeek.format(dateNow.add(new Duration(days: 1)));
+    weekDay2 = formatDayOfWeek.format(dateNow.add(new Duration(days: 2)));
+    weekDay3 = formatDayOfWeek.format(dateNow.add(new Duration(days: 3)));
+    weekDay4 = formatDayOfWeek.format(dateNow.add(new Duration(days: 4)));
+    weekDay5 = formatDayOfWeek.format(dateNow.add(new Duration(days: 5)));
+    weekDay6 = formatDayOfWeek.format(dateNow.add(new Duration(days: 6)));
+    weekDay7 = formatDayOfWeek.format(dateNow.add(new Duration(days: 7)));
+
+    super.initState();
+  }
 
   Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
     DocumentReference documentReference = collectionReference.document(id);
@@ -237,13 +259,13 @@ class _PredictionScreenPage extends State<PredictionScreen> {
       child: ListView(
         shrinkWrap: true,
         children: <Widget>[
-          _showDayListItem("Sábado", getPowHourDayAhead(1), textMargin),
-          _showDayListItem("Domingo", getPowHourDayAhead(2), textMargin),
-          _showDayListItem("Segunda-feira", getPowHourDayAhead(3), textMargin),
-          _showDayListItem("Terça-feira", getPowHourDayAhead(4), textMargin),
-          _showDayListItem("Quarta-feira", getPowHourDayAhead(5), textMargin),
-          _showDayListItem("Quinta-feira", getPowHourDayAhead(6), textMargin),
-          _showDayListItem("Sexta-feira", getPowHourDayAhead(7), textMargin),
+          _showDayListItem(weekDay1, getPowHourDayAhead(1), textMargin),
+          _showDayListItem(weekDay2, getPowHourDayAhead(2), textMargin),
+          _showDayListItem(weekDay3, getPowHourDayAhead(3), textMargin),
+          _showDayListItem(weekDay4, getPowHourDayAhead(4), textMargin),
+          _showDayListItem(weekDay5, getPowHourDayAhead(5), textMargin),
+          _showDayListItem(weekDay6, getPowHourDayAhead(6), textMargin),
+          _showDayListItem(weekDay7, getPowHourDayAhead(7), textMargin),
         ],
       ),
     );

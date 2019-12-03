@@ -201,7 +201,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: cardMaker.card(_potEleChart(data, pow.round().toString())),
+            child: cardMaker.card(_potEleChart(data, pow.toStringAsFixed(2))),
           ),
         ],
         staggeredTiles: [
