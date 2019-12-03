@@ -17,6 +17,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   double irradAtual = 0.0;
   List<dynamic> irradElevDataList = [];
   ChartCard cardMaker = ChartCard();
+  var isLoading = true;
 
   final CollectionReference heliusCollection = Firestore.instance.collection('usinas');
   final databaseReference = FirebaseDatabase.instance.reference();
@@ -43,24 +44,29 @@ class _PredictionScreenPage extends State<PredictionScreen> {
     weekDay6 = formatDayOfWeek.format(dateNow.add(new Duration(days: 6)));
     weekDay7 = formatDayOfWeek.format(dateNow.add(new Duration(days: 7)));
 
+    _prepareData(heliusCollection, "usina1");
     super.initState();
   }
 
-  Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
+  void _prepareData(CollectionReference collectionReference, String id) async{
     DocumentReference documentReference = collectionReference.document(id);
     DocumentSnapshot documentSnapshot = await documentReference.get();
 
     if(this.mounted){
       setState(() {
+        isLoading = true;
+      });
+
+      // Getting from Realtime Database
+      DataSnapshot dataSnapshot = await databaseReference.once();
+
+      setState(() {
         irradAtual = documentSnapshot['IRRAD_LDR']*1.0;
+        irradElevDataList = dataSnapshot.value['elevacao_radiacao'];
+
+        isLoading = false;
       });
     }
-
-    // Getting from Realtime Database
-    DataSnapshot dataSnapshot = await databaseReference.once();
-    irradElevDataList = dataSnapshot.value['elevacao_radiacao'];
-
-    return documentSnapshot;
   }
 
   double getAtualElev(){
@@ -154,7 +160,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
                 //Value
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text( valueString, style: TextStyle(
+                  child: isLoading ? CircularProgressIndicator() : Text( valueString, style: TextStyle(
                     fontSize: fontSizeData),),
                 ),
               ],
@@ -167,8 +173,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "usina1");
-
+    
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
@@ -234,6 +239,25 @@ class _PredictionScreenPage extends State<PredictionScreen> {
   }
 
   Widget _showDayListItem(String weekDay, String value, double textMargin){
+    if (isLoading == true){
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
+            height: 30.0,
+            child: Text(weekDay, style: TextStyle(fontSize: 18.0),),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: textMargin, vertical: textMargin),
+            height: 30.0,
+            child: CircularProgressIndicator(),
+          ),
+        ],
+      );
+    }
+
+    // If content is loaded
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[

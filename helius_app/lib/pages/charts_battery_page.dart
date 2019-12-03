@@ -14,6 +14,7 @@ class BatteryScreen extends StatefulWidget {
 
 class _BatteryScreenPage extends State<BatteryScreen> {
   // Variables
+  var isLoading = true;
   var data = [1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 2.0, 2.0];
   String vBattery = "";
   double pow = 0.0;
@@ -28,38 +29,33 @@ class _BatteryScreenPage extends State<BatteryScreen> {
   final CollectionReference heliusCollection = Firestore.instance.collection('usinas');
   ChartCard cardMaker = ChartCard();
 
-  Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
+  @override
+  void initState() {
+    _prepareData(heliusCollection, "usina1");
+    super.initState();
+  }
+
+  void _prepareData(CollectionReference collectionReference, String id) async{
     DocumentReference documentReference = collectionReference.document(id);
     DocumentSnapshot documentSnapshot = await documentReference.get();
+    
+    DataSnapshot dataSnapshot = await databaseReference.once(); // Getting data from Realtime Database
 
-    //Defining generator's power
-    // print('passou1');
     if(this.mounted){
+      setState(() {
+        isLoading = true;
+      });
+
       setState(() {
         pow = documentSnapshot['IGER'] * documentSnapshot['VGER'];
         vBattery = documentSnapshot['VBAT'].toStringAsFixed(2);
         irradAtual = documentSnapshot['IRRAD_LDR']*1.0;
+
+        irradElevDataList = dataSnapshot.value['elevacao_radiacao'];
+
+        isLoading = false;
       });
     }
-
-    // Getting data from Realtime Database
-    DataSnapshot dataSnapshot = await databaseReference.once();
-    irradElevDataList = dataSnapshot.value['elevacao_radiacao'];
-
-    //Defining generator's power chart content
-    // QuerySnapshot historySnapshots = await documentReference.collection('historico').getDocuments();
-    // var list = historySnapshots.documents;
-    // print('passou2');
-
-    // for (var i = 7; i >= 0; i--) {
-    //   data[i] = list[i].data['IGER'];
-    // }
-
-    // for (var i = 7; i >= 0; i--) {
-    //   print(data[i].toString() + '  ');
-    // }
-
-    return documentSnapshot;
   }
 
   double getPredictedPower(){
@@ -111,7 +107,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
                 //Value
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text( value+' W', style: TextStyle(
+                  child: isLoading ? CircularProgressIndicator() : Text(value+' W', style: TextStyle(
                     fontSize: 48.0),),
                 ),
 
@@ -170,7 +166,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
                 //Value
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text( valueString, style: TextStyle(
+                  child: isLoading ? CircularProgressIndicator() : Text( valueString, style: TextStyle(
                     fontSize: 30.0),),
                 ),
               ],
@@ -183,8 +179,7 @@ class _BatteryScreenPage extends State<BatteryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "usina1");
-
+    
     return Container(
       child: StaggeredGridView.count(
         crossAxisCount: 4,

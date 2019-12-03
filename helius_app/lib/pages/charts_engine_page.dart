@@ -10,6 +10,7 @@ class EngineScreen extends StatefulWidget {
 
 class _EngineScreenPage extends State<EngineScreen> {
   ChartCard cardMaker = ChartCard();
+  var isLoading = true;
 
   final CollectionReference heliusCollection = Firestore.instance.collection('usinas');
 
@@ -18,20 +19,30 @@ class _EngineScreenPage extends State<EngineScreen> {
   String mirrorTemp = "";
   String engSpin = "";
 
-  Future<DocumentSnapshot> _getDocumentById(CollectionReference collectionReference, String id) async {
+  @override
+  void initState() {
+    _prepareData(heliusCollection, "usina1");
+    super.initState();
+  }
+
+  void _prepareData(CollectionReference collectionReference, String id) async{
     DocumentReference documentReference = collectionReference.document(id);
     DocumentSnapshot documentSnapshot = await documentReference.get();
 
     if(this.mounted){
       setState(() {
+        isLoading = true;
+      });
+
+      setState(() {
         hotPiston = documentSnapshot['TEMP_PQUENTE'].round().toString();
         coldPiston = documentSnapshot['TEMP_PFRIO'].round().toString();
         mirrorTemp = documentSnapshot['TEMP_REFLETOR'].round().toString();
         engSpin = documentSnapshot['ROT'].round().toString();
+
+        isLoading = false;
       });
     }
-
-    return documentSnapshot;
   }
 
   Widget _cardContent(String title, String value, String unity){
@@ -57,7 +68,7 @@ class _EngineScreenPage extends State<EngineScreen> {
                 //Value
                 Padding(
                   padding: EdgeInsets.all(1.0),
-                  child: Text( valueString, style: TextStyle(
+                  child: isLoading ? CircularProgressIndicator() : Text( valueString, style: TextStyle(
                     fontSize: 30.0),),
                 ),
               ],
@@ -70,8 +81,7 @@ class _EngineScreenPage extends State<EngineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<DocumentSnapshot> document = _getDocumentById(heliusCollection, "usina1");
-
+    
     return Container(
       child: StaggeredGridView.count(
         crossAxisCount: 4,
