@@ -69,6 +69,17 @@ class _PredictionScreenPage extends State<PredictionScreen> {
     }
   }
 
+  void _preparePredictData(CollectionReference collectionReference, String id) async{
+    DocumentReference documentReference = collectionReference.document(id);
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+
+    if(this.mounted){
+      setState(() {
+        irradAtual = documentSnapshot['IRRAD_LDR']*1.0;
+      });
+    }
+  }
+
   double getAtualElev(){
 
     String data = formatDay.format(dateNow);
@@ -173,6 +184,7 @@ class _PredictionScreenPage extends State<PredictionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _preparePredictData(heliusCollection, "usina1");
     
     return ListView(
       shrinkWrap: true,

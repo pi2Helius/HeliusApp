@@ -81,7 +81,8 @@ class _EngineScreenPage extends State<EngineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
+    _prepareData(heliusCollection, "usina1");
+
     return Container(
       child: StaggeredGridView.count(
         crossAxisCount: 4,

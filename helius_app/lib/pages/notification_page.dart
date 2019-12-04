@@ -33,13 +33,19 @@ class _NotificationScreenPage extends State<NotificationScreen> {
     return Card(
       child: Column(
         children: <Widget>[
-          Container(
-            height: 100.0,
-            child: Text(document['descricao']),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              height: 50.0,
+              child: Text(document['descricao'], style: TextStyle(fontWeight: FontWeight.w500)),
+            )
           ),
 
-          Container(
-            child: Text(_convertTimestamp(document['data'])),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Container(
+              child: Text(_convertTimestamp(document['data']), style: TextStyle(fontWeight: FontWeight.w300)),
+            )
           )
         ],
         ),

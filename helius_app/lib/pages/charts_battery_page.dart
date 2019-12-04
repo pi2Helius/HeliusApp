@@ -72,9 +72,10 @@ class _BatteryScreenPage extends State<BatteryScreen> {
     }
 
     return 0.0;
+    // return pred.predicao(47.14, irradAtual, 45.0);
   }
 
-  String getEfficiency () {
+  String getEfficiency() {
     double predPower = getPredictedPower();
 
     if (predPower <= 0.0){
@@ -179,7 +180,8 @@ class _BatteryScreenPage extends State<BatteryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
+    _prepareData(heliusCollection, "usina1");
+
     return Container(
       child: StaggeredGridView.count(
         crossAxisCount: 4,
